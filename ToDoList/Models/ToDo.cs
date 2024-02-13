@@ -21,5 +21,6 @@ namespace ToDoList.Models
         public bool IsComplete { get; set; } = false;
         public PriorityLevel Priority { get; set; } = PriorityLevel.Medium;
         public int UserId { get; set; }
+        public virtual List<ToDoItem>? Items { get; set; }
     }
 }

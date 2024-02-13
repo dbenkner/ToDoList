@@ -16,5 +16,6 @@ namespace ToDoList.Data
 
         public DbSet<ToDoList.Models.User> Users { get; set; } = default!;
         public DbSet<ToDoList.Models.ToDo> ToDos { get; set; } = default!;
+        public DbSet<ToDoList.Models.ToDoItem> ToDosItems { get; set; } = default!;
     }
 }

@@ -20,6 +20,19 @@ namespace ToDoList.Controllers
         {
             return await _context.ToDos.ToListAsync();
         }
+        public async Task<ActionResult<ToDo>> ToDoDetails(int id)
+        {
+            if (id == 0)
+            {
+                return BadRequest();
+            }
+            var result = await _context.ToDos.Include(x => x.Items).Where(x => x.Id == id).ToListAsync();   
+            if (result.Count == 0 || Request == null) 
+            {
+                return NotFound();
+            }
+            return Ok(result);
+        }
         //Post api/ToDo
         [HttpPost]
         public async Task<ActionResult> NewToDo(ToDo toDo)
