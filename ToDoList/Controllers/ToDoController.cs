@@ -20,18 +20,19 @@ namespace ToDoList.Controllers
         {
             return await _context.ToDos.ToListAsync();
         }
+        [HttpGet("{id}")]
         public async Task<ActionResult<ToDo>> ToDoDetails(int id)
         {
             if (id == 0)
             {
                 return BadRequest();
             }
-            var result = await _context.ToDos.Include(x => x.Items).Where(x => x.Id == id).ToListAsync();   
-            if (result.Count == 0 || Request == null) 
+            var result = await _context.ToDos.Include(x => x.Items).FirstOrDefaultAsync(x =>x.Id == id);
+            if (Request == null) 
             {
                 return NotFound();
             }
-            return Ok(result);
+            return result;
         }
         //Post api/ToDo
         [HttpPost]
@@ -44,6 +45,29 @@ namespace ToDoList.Controllers
             _context.ToDos.Add(toDo);
             _context.SaveChanges();
             return Ok();    
+        }
+        //PUTs
+        [HttpPut("comp/{id}")]
+        public async Task<ActionResult<ToDo>> MarkComplete(int id)
+        {
+            if (id == 0)
+            {
+                return BadRequest();
+            }
+            var res = await _context.ToDos.Include(x => x.Items).FirstOrDefaultAsync(x => x.Id == id);
+            if (Request == null) {
+                return BadRequest();
+            }
+            foreach(var item in res.Items)
+            {
+                if (item.isComplete == false) {
+                    return BadRequest("All items must be marked completed first!");
+                }
+            }
+            res.IsComplete = true;
+            res.DateCompleted = DateTime.Now;
+            return Ok(res);
+
         }
     }
 }

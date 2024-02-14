@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace ToDoList.Models
 {
@@ -11,6 +12,7 @@ namespace ToDoList.Models
         public string? Description { get; set; }
         public bool isComplete { get; set; } = false;
         public int ToDoId { get; set; }
+        [JsonIgnore]
         public ToDo? ToDo { get; set; }
     }
 }

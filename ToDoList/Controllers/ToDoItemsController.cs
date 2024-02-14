@@ -40,5 +40,17 @@ namespace ToDoList.Controllers
             await _context.SaveChangesAsync();
             return Ok(toDoItem);
         }
+        //HTTP Puts
+        [HttpPut("comp/{id}")]
+        public async Task<ActionResult<ToDoItem>> MarkItemComplete(int id)
+        {
+            if(id == 0) {
+                return BadRequest();
+            }
+            var item = await _context.ToDosItems.FindAsync(id);
+            item.isComplete = true;
+            await _context.SaveChangesAsync();
+            return Ok(item);
+        }
     }
 }
