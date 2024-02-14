@@ -115,7 +115,29 @@ namespace ToDoList.Controllers
                     return Unauthorized("Invalid Login");
                 }
             }
-            return user;
+            return Ok(user);
+        }
+        [HttpPost("NewPW")]
+        public async Task<ActionResult<User>> NewPW(NewPasswordDTO newPasswordDTO)
+        {
+            var res = await _context.Users.FirstOrDefaultAsync(U => U.UserName == newPasswordDTO.Username.ToLower());
+            if (res == null)
+            {
+                return Unauthorized("Invalid Login");
+            }
+            using var hmac = new HMACSHA512(res.PasswordSalt);
+            var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(newPasswordDTO.OldPassword));
+            for( int i = 0;i < computedHash.Length; i++)
+            {
+                if (computedHash[i] != res.PasswordHash[i])
+                {
+                    return Unauthorized("Invalid Login");
+                }
+            }
+            res.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(newPasswordDTO.NewPassword));
+            res.PasswordSalt = hmac.Key;
+            await _context.SaveChangesAsync();
+            return Ok(res);
         }
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
