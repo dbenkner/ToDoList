@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ToDoList.Data;
+using ToDoList.DTOs;
 using ToDoList.Models;
 
 namespace ToDoList.Controllers
@@ -66,8 +67,24 @@ namespace ToDoList.Controllers
             }
             res.IsComplete = true;
             res.DateCompleted = DateTime.Now;
+            await _context.SaveChangesAsync();
             return Ok(res);
-
+        }
+        [HttpPut("setpri/{id}")]
+        public async Task<ActionResult<ToDo>> SetPrioirtyLevel(int id, SetPrioityDTO setPrioityDTO)
+        {
+            if (id == 0)
+            {
+                return BadRequest();
+            }
+            var toDo = _context.ToDos.Find(id);
+            if (toDo == null)
+            {
+                return BadRequest();
+            }
+            toDo.Priority = setPrioityDTO.PriorityLevel;
+            await _context.SaveChangesAsync();
+            return Ok(toDo);
         }
     }
 }

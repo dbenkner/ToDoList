@@ -24,7 +24,7 @@ namespace ToDoList.Controllers
 
         //HTTP POSTs
         [HttpPost]
-        public async Task<ActionResult<ToDoItem>> AddTooDoItem(NewToDoItemDTO toDoItemDTO)
+        public async Task<ActionResult<ToDoItem>> AddToDoItem(NewToDoItemDTO toDoItemDTO)
         {
             if (toDoItemDTO == null)
             {
