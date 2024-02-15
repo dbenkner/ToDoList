@@ -29,11 +29,21 @@ namespace ToDoList.Controllers
                 return BadRequest();
             }
             var result = await _context.ToDos.Include(x => x.Items).FirstOrDefaultAsync(x =>x.Id == id);
-            if (Request == null) 
+            if (result == null) 
             {
                 return NotFound();
             }
             return result;
+        }
+        //GET api/ToDo/U/{id}
+        [HttpGet("u/{id}")]
+        public async Task<ActionResult<IEnumerable<ToDo>>> GetByUserID(int uID)
+        {
+            if (uID == 0)
+            {
+                return BadRequest("invalid ID");
+            }
+            return await _context.ToDos.Where(T => T.UserId == uID).ToListAsync();
         }
         //Post api/ToDo
         [HttpPost]
@@ -43,8 +53,8 @@ namespace ToDoList.Controllers
             {
                 return BadRequest();
             }
-            _context.ToDos.Add(toDo);
-            _context.SaveChanges();
+            await _context.ToDos.AddAsync(toDo);
+            await _context.SaveChangesAsync();
             return Ok();    
         }
         //PUTs
@@ -85,6 +95,35 @@ namespace ToDoList.Controllers
             toDo.Priority = setPrioityDTO.PriorityLevel;
             await _context.SaveChangesAsync();
             return Ok(toDo);
+        }
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateToDo(int id, ToDo updateToDo)
+        {
+            if (id != updateToDo.Id)
+            {
+                return BadRequest();
+            }
+            _context.Entry(updateToDo).State = EntityState.Modified;
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if(!ToDoExists(id))
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return NoContent();
+        }
+        private bool ToDoExists(int id)
+        {
+            return _context.ToDos.Any(x => x.Id == id);
         }
     }
 }
