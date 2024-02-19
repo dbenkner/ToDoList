@@ -59,7 +59,7 @@ namespace ToDoList.Controllers
             return BadRequest();
             }
             _context.Entry(toDoItem).State = EntityState.Modified;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return NoContent();
         }
     }
