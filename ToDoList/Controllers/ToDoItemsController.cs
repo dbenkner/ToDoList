@@ -52,5 +52,15 @@ namespace ToDoList.Controllers
             await _context.SaveChangesAsync();
             return Ok(item);
         }
+        [HttpPut("edit/{id}")]
+        public async Task<IActionResult> EditToDoItem(int id, ToDoItem toDoItem)
+        {
+            if (id == 0 || id != toDoItem.Id) { 
+            return BadRequest();
+            }
+            _context.Entry(toDoItem).State = EntityState.Modified;
+            _context.SaveChanges();
+            return NoContent();
+        }
     }
 }
