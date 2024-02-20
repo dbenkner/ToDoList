@@ -100,6 +100,7 @@ namespace ToDoList.Controllers
         }
         [HttpPost("loginuser")]
         public async Task<ActionResult<User>> LogInUser(LogInUserDTO logInUser)
+        
         {
             var user  = _context.Users.SingleOrDefault(u => u.UserName == logInUser.Username);
             if (user == null)
@@ -139,6 +140,7 @@ namespace ToDoList.Controllers
             await _context.SaveChangesAsync();
             return Ok(res);
         }
+        
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
