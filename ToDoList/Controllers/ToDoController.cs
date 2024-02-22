@@ -36,7 +36,7 @@ namespace ToDoList.Controllers
             return result;
         }
         //GET api/ToDo/U/{id}
-        [HttpGet("u/{id}")]
+        [HttpGet("u/{uID}")]
         public async Task<ActionResult<IEnumerable<ToDo>>> GetByUserID(int uID)
         {
             if (uID == 0)
