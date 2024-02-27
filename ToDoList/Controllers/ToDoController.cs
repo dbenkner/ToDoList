@@ -121,6 +121,18 @@ namespace ToDoList.Controllers
             }
             return NoContent();
         }
+
+        //DELETE
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteToDo(int id)
+        {
+            var toDo = await _context.ToDos.FindAsync(id);
+            if (toDo == null) { return BadRequest(); }
+            _context.ToDos.Remove(toDo);
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+
         private bool ToDoExists(int id)
         {
             return _context.ToDos.Any(x => x.Id == id);
