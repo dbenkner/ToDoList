@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Immutable;
 using ToDoList.Data;
 using ToDoList.DTOs;
 using ToDoList.Models;
@@ -21,7 +22,34 @@ namespace ToDoList.Controllers
         {
             return await _context.ToDosItems.ToListAsync();
         }
-
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ToDoItem>> GetToDoItemById(int id)
+        {
+            if(id == 0)
+            {
+                return BadRequest();
+            }
+            var item = await _context.ToDosItems.FindAsync(id);
+            if (item == null)
+            {
+                return BadRequest();
+            }
+            return Ok(item);
+        }
+        [HttpGet("bytodos/{toDoID}")]
+        public async Task<ActionResult<IEnumerable<ToDoItem>>> GetItemsByToDoID(int toDoID)
+        {
+            if (toDoID == 0)
+            {
+                return BadRequest();
+            }
+            var items = await _context.ToDosItems.Where(x => x.ToDoId == toDoID).ToListAsync();
+            if (items == null || items.Count == 0)
+            {
+                return NotFound();
+            }
+            return items;
+        }
         //HTTP POSTs
         [HttpPost]
         public async Task<ActionResult<ToDoItem>> AddToDoItem(NewToDoItemDTO toDoItemDTO)
@@ -59,6 +87,19 @@ namespace ToDoList.Controllers
             return BadRequest();
             }
             _context.Entry(toDoItem).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+        //HTTP Deletes
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteToDoItem(int id)
+        {
+            var item = await _context.ToDosItems.FindAsync(id);
+            if (item == null)
+            {
+                return BadRequest();
+            }
+            _context.ToDosItems.Remove(item);
             await _context.SaveChangesAsync();
             return NoContent();
         }
