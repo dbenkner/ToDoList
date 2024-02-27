@@ -47,15 +47,22 @@ namespace ToDoList.Controllers
         }
         //Post api/ToDo
         [HttpPost]
-        public async Task<ActionResult> NewToDo(ToDo toDo)
+        public async Task<ActionResult> NewToDo(NewToDoDTO newToDo)
         {
-            if (toDo == null)
+            if(newToDo == null)
             {
                 return BadRequest();
             }
+            ToDo toDo = new ToDo() {
+                Name = newToDo.Name,
+                Description = newToDo.Description,
+                Priority = (PriorityLevel)newToDo.Priority,
+                DateStarted = newToDo.DateStarted,
+                UserId = newToDo.UserId
+            };
             await _context.ToDos.AddAsync(toDo);
             await _context.SaveChangesAsync();
-            return Ok();    
+            return Ok(toDo);
         }
         //PUTs
         [HttpPut("comp/{id}")]
